@@ -3,7 +3,7 @@
     <!-- Header -->
     <header class="app-header">
       <div class="header-left">
-        <div class="brand" @click="router.push('/')">MIROFISH</div>
+        <div class="brand" @click="router.push('/')">MIROFISH<span class="brand-dot">.</span><span class="brand-by">BY EMIDGROUP</span><span class="brand-cursor">_</span></div>
       </div>
       
       <div class="header-center">

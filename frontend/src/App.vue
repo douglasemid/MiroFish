@@ -49,4 +49,46 @@ html, body {
 button {
   font-family: inherit;
 }
+
+/* ============================================================
+   Brand mark MIROFISH.BY EMIDGROUP_ — global em qualquer view
+   Aplicado tanto em .brand (views internas) quanto .nav-brand
+   ============================================================ */
+.brand,
+.nav-brand {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.brand .brand-dot,
+.nav-brand .brand-dot {
+  color: #FF4500;
+  font-weight: 900;
+  font-size: 1.4em;
+  line-height: 1;
+  margin-left: 1px;
+}
+
+.brand .brand-by,
+.nav-brand .brand-by {
+  font-family: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  font-weight: 600;
+  font-size: 0.6em;
+  letter-spacing: 1.2px;
+  margin-left: 8px;
+  opacity: 0.85;
+}
+
+.brand .brand-cursor,
+.nav-brand .brand-cursor {
+  color: #FF4500;
+  font-family: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  font-weight: 800;
+  margin-left: 6px;
+  animation: globalBrandBlink 1s step-end infinite;
+}
+
+@keyframes globalBrandBlink {
+  50% { opacity: 0; }
+}
 </style>
