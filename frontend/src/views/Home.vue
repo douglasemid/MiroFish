@@ -2,7 +2,7 @@
   <div class="home-container">
     <!-- 顶部导航栏 -->
     <nav class="navbar">
-      <div class="nav-brand">MIROFISH</div>
+      <div class="nav-brand">MIROFISH<span class="brand-dot">.</span><span class="brand-by">BY EMIDGROUP</span><span class="brand-cursor">_</span></div>
       <div class="nav-links">
         <a href="/documentacao-emidgroup.html" target="_blank" class="github-link docs-link">
           Documentação EMIDGROUP <span class="arrow">↗</span>
@@ -355,6 +355,41 @@ const startSimulation = () => {
   font-weight: 800;
   letter-spacing: 1px;
   font-size: 1.2rem;
+  display: inline-flex;
+  align-items: baseline;
+}
+
+/* Ponto vermelho/laranja em destaque após MIROFISH */
+.nav-brand .brand-dot {
+  color: #FF4500;
+  font-weight: 900;
+  font-size: 1.4rem;
+  line-height: 1;
+  margin-left: 1px;
+}
+
+/* "BY EMIDGROUP" — mesma fonte mono, menor e mais sutil */
+.nav-brand .brand-by {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 1.2px;
+  margin-left: 8px;
+  opacity: 0.85;
+}
+
+/* Cursor piscante ao final */
+.nav-brand .brand-cursor {
+  color: #FF4500;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 1.2rem;
+  margin-left: 6px;
+  animation: navBrandBlink 1s step-end infinite;
+}
+
+@keyframes navBrandBlink {
+  50% { opacity: 0; }
 }
 
 .nav-links {
