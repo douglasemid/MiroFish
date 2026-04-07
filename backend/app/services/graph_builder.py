@@ -426,10 +426,10 @@ class GraphBuilderService:
     def get_graph_data(self, graph_id: str) -> Dict[str, Any]:
         """
         获取完整图谱数据（包含详细信息）
-        
+
         Args:
             graph_id: 图谱ID
-            
+
         Returns:
             包含nodes和edges的字典，包括时间信息、属性等详细数据
         """
@@ -440,45 +440,53 @@ class GraphBuilderService:
         node_map = {}
         for node in nodes:
             node_map[node.uuid_] = node.name or ""
-        
+
+        # Batch-translate Zep-generated summaries and facts to the active locale
+        # (Zep generates these in English regardless of MiroFish's UI language).
+        from ..utils.text_translator import translate_strings
+        node_summaries_raw = [(node.summary or "") for node in nodes]
+        edge_facts_raw = [(edge.fact or "") for edge in edges]
+        node_summaries_pt = translate_strings(node_summaries_raw)
+        edge_facts_pt = translate_strings(edge_facts_raw)
+
         nodes_data = []
-        for node in nodes:
+        for idx, node in enumerate(nodes):
             # 获取创建时间
             created_at = getattr(node, 'created_at', None)
             if created_at:
                 created_at = str(created_at)
-            
+
             nodes_data.append({
                 "uuid": node.uuid_,
                 "name": node.name,
                 "labels": node.labels or [],
-                "summary": node.summary or "",
+                "summary": node_summaries_pt[idx],
                 "attributes": node.attributes or {},
                 "created_at": created_at,
             })
-        
+
         edges_data = []
-        for edge in edges:
+        for idx, edge in enumerate(edges):
             # 获取时间信息
             created_at = getattr(edge, 'created_at', None)
             valid_at = getattr(edge, 'valid_at', None)
             invalid_at = getattr(edge, 'invalid_at', None)
             expired_at = getattr(edge, 'expired_at', None)
-            
+
             # 获取 episodes
             episodes = getattr(edge, 'episodes', None) or getattr(edge, 'episode_ids', None)
             if episodes and not isinstance(episodes, list):
                 episodes = [str(episodes)]
             elif episodes:
                 episodes = [str(e) for e in episodes]
-            
+
             # 获取 fact_type
             fact_type = getattr(edge, 'fact_type', None) or edge.name or ""
-            
+
             edges_data.append({
                 "uuid": edge.uuid_,
                 "name": edge.name or "",
-                "fact": edge.fact or "",
+                "fact": edge_facts_pt[idx],
                 "fact_type": fact_type,
                 "source_node_uuid": edge.source_node_uuid,
                 "target_node_uuid": edge.target_node_uuid,

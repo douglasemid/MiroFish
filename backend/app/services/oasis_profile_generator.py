@@ -525,14 +525,23 @@ class OasisProfileGenerator:
         max_attempts = 3
         last_error = None
         
+        # Build language enforcement (PT-BR) — same logic as LLMClient.chat()
+        from ..utils.llm_client import _build_language_enforcement_message
+        enforcement_msg = _build_language_enforcement_message()
+        base_messages = [
+            {"role": "system", "content": self._get_system_prompt(is_individual)},
+            {"role": "user", "content": prompt},
+        ]
+        if enforcement_msg is not None:
+            messages_with_lang = [enforcement_msg] + base_messages
+        else:
+            messages_with_lang = base_messages
+
         for attempt in range(max_attempts):
             try:
                 response = self.client.chat.completions.create(
                     model=self.model_name,
-                    messages=[
-                        {"role": "system", "content": self._get_system_prompt(is_individual)},
-                        {"role": "user", "content": prompt}
-                    ],
+                    messages=messages_with_lang,
                     response_format={"type": "json_object"},
                     temperature=0.7 - (attempt * 0.1)  # 每次重试降低温度
                     # 不设置max_tokens，让LLM自由发挥

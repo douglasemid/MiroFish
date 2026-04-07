@@ -434,18 +434,27 @@ class SimulationConfigGenerator:
     def _call_llm_with_retry(self, prompt: str, system_prompt: str) -> Dict[str, Any]:
         """带重试的LLM调用，包含JSON修复逻辑"""
         import re
-        
+
+        # Build language enforcement (PT-BR) — same logic as LLMClient.chat()
+        from ..utils.llm_client import _build_language_enforcement_message
+        enforcement_msg = _build_language_enforcement_message()
+        base_messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt},
+        ]
+        if enforcement_msg is not None:
+            messages_with_lang = [enforcement_msg] + base_messages
+        else:
+            messages_with_lang = base_messages
+
         max_attempts = 3
         last_error = None
-        
+
         for attempt in range(max_attempts):
             try:
                 response = self.client.chat.completions.create(
                     model=self.model_name,
-                    messages=[
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": prompt}
-                    ],
+                    messages=messages_with_lang,
                     response_format={"type": "json_object"},
                     temperature=0.7 - (attempt * 0.1)  # 每次重试降低温度
                     # 不设置max_tokens，让LLM自由发挥

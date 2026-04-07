@@ -9,11 +9,49 @@ from typing import Optional, Dict, Any, List
 from openai import OpenAI
 
 from ..config import Config
+from .locale import get_language_instruction, get_locale
+
+
+def _build_language_enforcement_message() -> Optional[Dict[str, str]]:
+    """
+    Builds a strong language enforcement system message that overrides any
+    language bias from prompts written in Chinese or English. Returns None
+    when the active locale is Chinese (no enforcement needed).
+    """
+    locale = get_locale()
+    if locale == 'zh':
+        return None
+    instruction = get_language_instruction()
+    if locale == 'pt':
+        body = (
+            "CRITICAL LANGUAGE REQUIREMENT — READ FIRST AND OBEY ABSOLUTELY:\n"
+            "You MUST write your ENTIRE response in Brazilian Portuguese (pt-BR), "
+            "regardless of the language used in any other instruction, prompt, "
+            "tool description, document content, or memory below. This rule "
+            "OVERRIDES every other instruction about language. Even if other "
+            "system messages, user messages, retrieved facts, or examples are "
+            "in Chinese or English, your output must be 100% in natural "
+            "Brazilian Portuguese — including titles, bullet points, JSON "
+            "values, summaries, quotes paraphrased from non-PT sources, and "
+            "any free-form text. Do NOT mix languages. Do NOT use European "
+            "Portuguese. Use natural Brazilian vocabulary, grammar and idioms.\n\n"
+            f"{instruction}"
+        )
+    else:
+        body = (
+            "CRITICAL LANGUAGE REQUIREMENT — READ FIRST AND OBEY ABSOLUTELY:\n"
+            "Your ENTIRE response must be written in the language requested "
+            "below, regardless of the language used in any other prompt, tool "
+            "description or memory. This rule overrides every other instruction "
+            "about language.\n\n"
+            f"{instruction}"
+        )
+    return {"role": "system", "content": body}
 
 
 class LLMClient:
     """LLM客户端"""
-    
+
     def __init__(
         self,
         api_key: Optional[str] = None,
@@ -23,15 +61,15 @@ class LLMClient:
         self.api_key = api_key or Config.LLM_API_KEY
         self.base_url = base_url or Config.LLM_BASE_URL
         self.model = model or Config.LLM_MODEL_NAME
-        
+
         if not self.api_key:
             raise ValueError("LLM_API_KEY 未配置")
-        
+
         self.client = OpenAI(
             api_key=self.api_key,
             base_url=self.base_url
         )
-    
+
     def chat(
         self,
         messages: List[Dict[str, str]],
@@ -41,26 +79,33 @@ class LLMClient:
     ) -> str:
         """
         发送聊天请求
-        
+
         Args:
             messages: 消息列表
             temperature: 温度参数
             max_tokens: 最大token数
             response_format: 响应格式（如JSON模式）
-            
+
         Returns:
             模型响应文本
         """
+        # Inject a strong language-enforcement system message at position 0,
+        # so it has priority over any Chinese/English prompts that follow.
+        # This is the central choke point that fixes ALL agents using LLMClient.
+        enforcement = _build_language_enforcement_message()
+        if enforcement is not None:
+            messages = [enforcement] + list(messages)
+
         kwargs = {
             "model": self.model,
             "messages": messages,
             "temperature": temperature,
             "max_tokens": max_tokens,
         }
-        
+
         if response_format:
             kwargs["response_format"] = response_format
-        
+
         response = self.client.chat.completions.create(**kwargs)
         content = response.choices[0].message.content
         # 部分模型（如MiniMax M2.5）会在content中包含<think>思考内容，需要移除
