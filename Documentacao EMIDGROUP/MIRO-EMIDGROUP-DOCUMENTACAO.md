@@ -61,23 +61,12 @@
 
 - **Host:** `187.77.234.102`
 - **Domínio:** `miro.emidgroup.com.br` (registro DNS A apontando para a VPS)
-- **Rede Docker compartilhada:** `app_rastelli-net` (mesma do sistema Rastelli Vineyards, mas em containers e pastas totalmente isolados)
+- **Rede Docker:** bridge dedicada para o ecossistema EMIDGROUP
 - **SSL:** Let's Encrypt válido até 2026-07-06, renovação automática
-- **Reverse proxy:** Nginx (containerizado em `rastelli_nginx`) com server block dedicado para `miro.emidgroup.com.br`
+- **Reverse proxy:** Nginx (containerizado) com server block dedicado para `miro.emidgroup.com.br`
 - **Pasta isolada na VPS:** `/home/deploy/mirofish/`
 - **Imagem Docker:** `mirofish-pt:local` (buildada localmente a partir do fork `douglasemid/MiroFish` com tradução PT-BR embutida)
 - **Consumo idle do container:** ~500 MB RAM, 1% CPU
-
-### Roles do MiroFish vs Rastelli (sem conflito)
-
-A VPS hospeda dois sistemas isolados:
-
-| Sistema | Domínio | Pasta | Container(s) |
-|---|---|---|---|
-| **Rastelli Vineyards** | `app.rastellivineyards.com.br` | `/home/deploy/app/` | `rastelli_frontend`, `rastelli_backend`, `rastelli_postgres`, `rastelli_redis`, `rastelli_nginx` |
-| **Miro.EMIDGROUP** | `miro.emidgroup.com.br` | `/home/deploy/mirofish/` | `mirofish` |
-
-Eles compartilham apenas o **Nginx** (que serve os dois domínios via server blocks distintos) e a **rede Docker**, sem qualquer mistura de dados, código ou configuração.
 
 ---
 
@@ -475,7 +464,7 @@ LLM_MODEL_NAME=anthropic/claude-haiku-4-5
 
 Sua VPS tem:
 - **2 vCPUs** (não potentes)
-- **7,8 GB RAM** (com Rastelli + MiroFish já consumindo ~2 GB)
+- **7,8 GB RAM** (com o MiroFish e demais serviços consumindo ~2 GB)
 - **Sem GPU**
 
 LLMs locais minimamente úteis exigem:
@@ -775,16 +764,16 @@ df -h /                  # confere espaço liberado
 
 ```bash
 # Testar config
-docker exec rastelli_nginx nginx -t
+docker exec edm_nginx nginx -t
 
 # Recarregar config sem downtime
-docker exec rastelli_nginx nginx -s reload
+docker exec edm_nginx nginx -s reload
 
 # Ver vhost atual
-cat /home/deploy/app/nginx/nginx.conf
+cat /etc/nginx/nginx.conf
 
 # Backup antes de editar
-cp /home/deploy/app/nginx/nginx.conf /home/deploy/app/nginx/nginx.conf.bak
+cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
 ```
 
 ### Renovação manual do certificado SSL
@@ -921,12 +910,12 @@ A pilha funciona assim:
 ```
 Browser → https://miro.emidgroup.com.br
          ↓ (TLS handshake com cert Let's Encrypt)
-Nginx (rastelli_nginx, container) — porta 443
+Nginx (container) — porta 443
          ↓ (server block para miro.emidgroup.com.br)
 proxy_pass http://mirofish:3000/        ← frontend Vite
 proxy_pass http://mirofish:5001/api/    ← backend Flask
          ↓
-Container `mirofish` na rede `app_rastelli-net`
+Container `mirofish` na rede Docker interna
 ```
 
 O Nginx usa **resolver Docker interno** (`127.0.0.11`) para resolver lazy DNS dos containers, então funciona mesmo se o `mirofish` for recriado.

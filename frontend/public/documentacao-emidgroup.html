@@ -683,19 +683,9 @@ footer .links a:hover { color: var(--orange); border-color: var(--orange); }
       <div class="cards">
         <div class="card"><h5>HOST</h5><div class="big" style="font-size:1.1rem">187.77.234.102</div><div class="desc">Ubuntu, 2 vCPUs, 7,8 GB RAM</div></div>
         <div class="card"><h5>SSL</h5><div class="big" style="font-size:1.1rem">Let's Encrypt</div><div class="desc">Válido até 2026-07-06, auto-renovação</div></div>
-        <div class="card"><h5>NETWORK</h5><div class="big" style="font-size:1.1rem">app_rastelli-net</div><div class="desc">Compartilhada (sem mistura)</div></div>
+        <div class="card"><h5>NETWORK</h5><div class="big" style="font-size:1.1rem">Docker bridge</div><div class="desc">Rede dedicada EMIDGROUP</div></div>
         <div class="card"><h5>RAM IDLE</h5><div class="big">~500MB</div><div class="desc">1% CPU em estado ocioso</div></div>
       </div>
-
-      <h3>Coexistência com Rastelli Vineyards (sem conflito)</h3>
-      <div class="table-wrap"><table>
-        <thead><tr><th>Sistema</th><th>Domínio</th><th>Pasta</th><th>Containers</th></tr></thead>
-        <tbody>
-          <tr><td><strong>Rastelli</strong></td><td>app.rastellivineyards.com.br</td><td><code>/home/deploy/app/</code></td><td>5 containers</td></tr>
-          <tr><td><strong>Miro.EMIDGROUP</strong></td><td>miro.emidgroup.com.br</td><td><code>/home/deploy/mirofish/</code></td><td><code>mirofish</code></td></tr>
-        </tbody>
-      </table></div>
-      <p>Compartilham apenas o <strong>Nginx</strong> (server blocks distintos) e a rede Docker, sem qualquer mistura de dados, código ou configuração.</p>
     </section>
 
     <!-- ========== SECAO 2 ========== -->
@@ -1205,8 +1195,8 @@ free -h
 ss -tlnp
 
 # Nginx
-docker exec rastelli_nginx nginx -t
-docker exec rastelli_nginx nginx -s reload
+docker exec edm_nginx nginx -t
+docker exec edm_nginx nginx -s reload
 
 # Renovação SSL (já é automática via systemd timer)
 certbot renew --dry-run
@@ -1250,12 +1240,12 @@ certbot renew</code></pre>
       <h3>Como o Nginx encaminha o tráfego</h3>
 <pre><code>Browser → https://miro.emidgroup.com.br
          ↓ (TLS handshake com cert Let's Encrypt)
-Nginx (rastelli_nginx, container) — porta 443
+Nginx (container) — porta 443
          ↓ (server block para miro.emidgroup.com.br)
 proxy_pass http://mirofish:3000/        ← frontend Vite
 proxy_pass http://mirofish:5001/api/    ← backend Flask
          ↓
-Container `mirofish` na rede `app_rastelli-net`</code></pre>
+Container `mirofish` na rede Docker interna</code></pre>
       <p>O Nginx usa <strong>resolver Docker interno</strong> (<code>127.0.0.11</code>) para resolver lazy DNS dos containers. O Host header é enviado como <code>localhost</code> para o frontend (para o Vite aceitar via <code>allowedHosts</code>), e o host real chega no backend via <code>X-Forwarded-Host</code>.</p>
 
       <h3>Tradução incompleta — pontos não traduzidos</h3>
