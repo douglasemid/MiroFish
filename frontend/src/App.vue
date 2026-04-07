@@ -14,12 +14,17 @@
   box-sizing: border-box;
 }
 
+html, body {
+  background-color: #ffffff;
+}
+
 #app {
   font-family: 'JetBrains Mono', 'Space Grotesk', 'Noto Sans SC', monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #000000;
-  background-color: #ffffff;
+  /* transparente para revelar o canvas .bg-network atras */
+  background-color: transparent;
 }
 
 /* 滚动条样式 */

@@ -1,5 +1,8 @@
 <template>
   <div class="home-container">
+    <!-- Background — Rede neural 3D minimalista reativa ao mouse -->
+    <canvas ref="bgCanvas" class="bg-network" aria-hidden="true"></canvas>
+
     <!-- 顶部导航栏 -->
     <nav class="navbar">
       <div class="nav-brand">MIROFISH<span class="brand-dot">.</span><span class="brand-by">BY EMIDGROUP</span><span class="brand-cursor">_</span></div>
@@ -215,10 +218,201 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import HistoryDatabase from '../components/HistoryDatabase.vue'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+
+// ============================================================
+// Background — Rede neural 3D minimalista reativa ao mouse
+// ============================================================
+const bgCanvas = ref(null)
+let _bgRaf = null
+let _bgCleanup = null
+
+function initBackgroundMesh() {
+  const canvas = bgCanvas.value
+  if (!canvas) return
+  const ctx = canvas.getContext('2d', { alpha: true })
+
+  const PARTICLE_COUNT = 110
+  const CONNECT_DISTANCE_BASE = 150
+  const PERSPECTIVE = 700
+
+  let dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2))
+  let w = 0, h = 0
+  let particles = []
+
+  // Mouse + camera state
+  let mouseNX = 0, mouseNY = 0
+  let targetRotX = 0, targetRotY = 0
+  let curRotX = 0, curRotY = 0
+  let driftPhase = 0
+  let isVisible = true
+
+  function resize() {
+    dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2))
+    w = window.innerWidth * dpr
+    h = window.innerHeight * dpr
+    canvas.width = w
+    canvas.height = h
+    canvas.style.width = window.innerWidth + 'px'
+    canvas.style.height = window.innerHeight + 'px'
+  }
+
+  function rand(a, b) { return a + Math.random() * (b - a) }
+
+  function spawnParticles() {
+    particles = []
+    const spread = Math.max(w, h) * 0.7
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push({
+        x: rand(-spread, spread),
+        y: rand(-spread, spread),
+        z: rand(-450, 450),
+        vx: rand(-0.18, 0.18) * dpr,
+        vy: rand(-0.18, 0.18) * dpr,
+        vz: rand(-0.12, 0.12),
+      })
+    }
+  }
+
+  function project(p, sinX, cosX, sinY, cosY) {
+    // Rotação em Y (yaw)
+    const xz = p.x * cosY - p.z * sinY
+    const zz = p.x * sinY + p.z * cosY
+    // Rotação em X (pitch)
+    const yz = p.y * cosX - zz * sinX
+    const z2 = p.y * sinX + zz * cosX
+    const scale = PERSPECTIVE / (PERSPECTIVE + z2)
+    return {
+      sx: w / 2 + xz * scale,
+      sy: h / 2 + yz * scale,
+      scale,
+      depth: z2,
+    }
+  }
+
+  function tick() {
+    if (!isVisible) {
+      _bgRaf = requestAnimationFrame(tick)
+      return
+    }
+
+    // Drift sutil contínuo (mesmo sem mouse) + smooth lerp
+    driftPhase += 0.0015
+    const driftX = Math.sin(driftPhase) * 0.06
+    const driftY = Math.cos(driftPhase * 0.7) * 0.04
+    curRotX += (targetRotX + driftX - curRotX) * 0.045
+    curRotY += (targetRotY + driftY - curRotY) * 0.045
+
+    const sinX = Math.sin(curRotX), cosX = Math.cos(curRotX)
+    const sinY = Math.sin(curRotY), cosY = Math.cos(curRotY)
+
+    // Update + wrap
+    const halfW = w * 0.85, halfH = h * 0.85
+    for (const p of particles) {
+      p.x += p.vx
+      p.y += p.vy
+      p.z += p.vz
+      if (p.x > halfW || p.x < -halfW) p.vx *= -1
+      if (p.y > halfH || p.y < -halfH) p.vy *= -1
+      if (p.z > 450 || p.z < -450) p.vz *= -1
+    }
+
+    // Projeção
+    const proj = new Array(particles.length)
+    for (let i = 0; i < particles.length; i++) {
+      proj[i] = project(particles[i], sinX, cosX, sinY, cosY)
+    }
+
+    ctx.clearRect(0, 0, w, h)
+
+    // Conexões — só entre pontos próximos
+    const connectDist = CONNECT_DISTANCE_BASE * dpr
+    const connectDistSq = connectDist * connectDist
+    ctx.lineWidth = 0.6 * dpr
+    for (let i = 0; i < proj.length; i++) {
+      const a = proj[i]
+      for (let j = i + 1; j < proj.length; j++) {
+        const b = proj[j]
+        const dx = a.sx - b.sx
+        const dy = a.sy - b.sy
+        const dsq = dx * dx + dy * dy
+        if (dsq < connectDistSq) {
+          const d = Math.sqrt(dsq)
+          // Profundidade média influencia opacidade (perto = mais visível)
+          const depthFactor = (a.scale + b.scale) * 0.5
+          const alpha = (1 - d / connectDist) * 0.18 * depthFactor
+          ctx.strokeStyle = `rgba(120,120,120,${alpha.toFixed(3)})`
+          ctx.beginPath()
+          ctx.moveTo(a.sx, a.sy)
+          ctx.lineTo(b.sx, b.sy)
+          ctx.stroke()
+        }
+      }
+    }
+
+    // Pontos
+    for (let i = 0; i < proj.length; i++) {
+      const p = proj[i]
+      const r = Math.max(0.6, 1.6 * dpr * p.scale)
+      ctx.fillStyle = `rgba(70,70,70,${(0.32 * p.scale).toFixed(3)})`
+      ctx.beginPath()
+      ctx.arc(p.sx, p.sy, r, 0, Math.PI * 2)
+      ctx.fill()
+    }
+
+    _bgRaf = requestAnimationFrame(tick)
+  }
+
+  function onPointer(e) {
+    const cx = (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX
+    const cy = (e.touches && e.touches[0]) ? e.touches[0].clientY : e.clientY
+    if (cx == null || cy == null) return
+    mouseNX = cx / window.innerWidth - 0.5
+    mouseNY = cy / window.innerHeight - 0.5
+    // Pitch/yaw máximo ~28°
+    targetRotY = mouseNX * 0.55
+    targetRotX = mouseNY * 0.45
+  }
+
+  function onVisibility() {
+    isVisible = !document.hidden
+  }
+
+  function onResize() {
+    resize()
+    spawnParticles()
+  }
+
+  resize()
+  spawnParticles()
+  window.addEventListener('mousemove', onPointer, { passive: true })
+  window.addEventListener('touchmove', onPointer, { passive: true })
+  window.addEventListener('resize', onResize)
+  document.addEventListener('visibilitychange', onVisibility)
+  _bgRaf = requestAnimationFrame(tick)
+
+  _bgCleanup = () => {
+    window.removeEventListener('mousemove', onPointer)
+    window.removeEventListener('touchmove', onPointer)
+    window.removeEventListener('resize', onResize)
+    document.removeEventListener('visibilitychange', onVisibility)
+    if (_bgRaf) cancelAnimationFrame(_bgRaf)
+    _bgRaf = null
+  }
+}
+
+onMounted(() => {
+  // Respeita usuários que pediram menos animação
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (!reduce) initBackgroundMesh()
+})
+
+onBeforeUnmount(() => {
+  if (_bgCleanup) _bgCleanup()
+})
 
 const router = useRouter()
 
@@ -334,9 +528,34 @@ const startSimulation = () => {
 
 .home-container {
   min-height: 100vh;
-  background: var(--white);
+  /* background transparente para revelar o canvas .bg-network atras */
+  background: transparent;
   font-family: var(--font-sans);
   color: var(--black);
+  position: relative;
+  isolation: isolate; /* cria stacking context proprio */
+}
+
+/* Canvas de background — rede neural 3D reativa ao mouse */
+.bg-network {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.65;
+  /* leve dessaturacao caso renderizador adicione subpixel cor */
+  filter: saturate(0);
+  will-change: transform;
+}
+
+/* Conteudo principal acima do canvas */
+.home-container > .navbar,
+.home-container > .main-content {
+  position: relative;
+  z-index: 1;
 }
 
 /* 顶部导航 */
