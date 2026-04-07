@@ -4,6 +4,9 @@
     <nav class="navbar">
       <div class="nav-brand">MIROFISH</div>
       <div class="nav-links">
+        <a href="/documentacao-emidgroup.html" target="_blank" class="github-link docs-link">
+          Documentação EMIDGROUP <span class="arrow">↗</span>
+        </a>
         <LanguageSwitcher />
         <a href="https://github.com/666ghj/MiroFish" target="_blank" class="github-link">
           {{ $t('nav.visitGithub') }} <span class="arrow">↗</span>

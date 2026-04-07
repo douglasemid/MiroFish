@@ -1,0 +1,1456 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Documentação EMIDGROUP — Miro</title>
+<meta name="description" content="Documentação completa do Miro.EMIDGROUP — modus operandi, variáveis técnicas e guia de uso" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@100..800&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+
+<style>
+/* ========== RESET + TOKENS ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --black: #000000;
+  --white: #FFFFFF;
+  --orange: #FF4500;
+  --orange-soft: #FFF1EA;
+  --gray-900: #111111;
+  --gray-700: #444444;
+  --gray-600: #666666;
+  --gray-500: #888888;
+  --gray-400: #999999;
+  --gray-300: #CCCCCC;
+  --gray-200: #DDDDDD;
+  --gray-150: #E5E5E5;
+  --gray-100: #F0F0F0;
+  --gray-50:  #F5F5F5;
+
+  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono:    'JetBrains Mono', 'SF Mono', Menlo, monospace;
+
+  --gap-sm: 8px;
+  --gap-md: 16px;
+  --gap-lg: 24px;
+  --gap-xl: 40px;
+
+  --pad-page: 60px 40px;
+  --max-w: 1240px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--white);
+  color: var(--black);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--orange); color: var(--white); }
+
+a { color: var(--black); text-decoration: none; }
+a:hover { color: var(--orange); }
+
+/* ========== NAVBAR ========== */
+.navbar {
+  height: 60px;
+  background: var(--black);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  position: sticky; top: 0; z-index: 1000;
+  border-bottom: 1px solid #1a1a1a;
+}
+.nav-brand {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  letter-spacing: 1px;
+  font-size: 1.2rem;
+  color: var(--white);
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-brand .square {
+  display: inline-block; width: 14px; height: 14px;
+  background: var(--orange);
+}
+.nav-links {
+  display: flex; align-items: center; gap: 24px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--white);
+}
+.nav-links a {
+  color: var(--white);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--orange); }
+.nav-links .arrow { color: var(--orange); }
+
+/* ========== HERO ========== */
+.hero {
+  padding: 80px 40px 60px;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  border-bottom: 1px solid var(--gray-150);
+}
+.hero-tags {
+  display: flex; gap: var(--gap-md); flex-wrap: wrap;
+  margin-bottom: var(--gap-lg);
+}
+.tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border: 1px solid var(--gray-300);
+  background: var(--white);
+  color: var(--gray-700);
+}
+.tag.orange { border-color: var(--orange); color: var(--orange); }
+.tag .dot { width: 6px; height: 6px; background: currentColor; }
+.tag .square { width: 8px; height: 8px; background: var(--orange); display: inline-block; }
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 4rem;
+  line-height: 1.05;
+  letter-spacing: -2px;
+  margin-bottom: var(--gap-lg);
+  background: linear-gradient(90deg, #000000 0%, #444444 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero h1 .blink {
+  display: inline-block; width: 0.45ch; background: var(--orange);
+  -webkit-text-fill-color: var(--orange);
+  animation: blink 1s step-end infinite;
+  vertical-align: baseline;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+.hero .lead {
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  color: var(--gray-700);
+  max-width: 780px;
+  border-left: 3px solid var(--orange);
+  padding-left: 18px;
+  margin-bottom: var(--gap-xl);
+}
+.hero-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--gap-md);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+.meta-item {
+  border: 1px solid var(--gray-200);
+  padding: 14px 16px;
+}
+.meta-label {
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.65rem;
+  margin-bottom: 4px;
+}
+.meta-value {
+  color: var(--black);
+  font-weight: 600;
+  font-size: 0.85rem;
+  word-break: break-all;
+}
+.meta-value a { color: var(--black); border-bottom: 1px dotted var(--gray-400); }
+.meta-value a:hover { color: var(--orange); border-color: var(--orange); }
+
+/* ========== LAYOUT GERAL ========== */
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 60px;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 60px 40px 120px;
+}
+
+/* ========== SIDEBAR ========== */
+aside.sidebar {
+  position: sticky;
+  top: 80px;
+  align-self: start;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  border-right: 1px solid var(--gray-150);
+  padding-right: 24px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+.sidebar h4 {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  margin-bottom: var(--gap-md);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--gray-200);
+}
+.sidebar ol {
+  list-style: none;
+  counter-reset: nav;
+}
+.sidebar ol li {
+  counter-increment: nav;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--gray-150);
+  transition: padding-left .2s;
+}
+.sidebar ol li::before {
+  content: counter(nav, decimal-leading-zero);
+  display: inline-block;
+  width: 32px;
+  color: var(--gray-300);
+  font-weight: 600;
+}
+.sidebar ol li a {
+  display: inline;
+  font-size: 0.78rem;
+  color: var(--gray-700);
+}
+.sidebar ol li:hover { padding-left: 6px; }
+.sidebar ol li:hover a { color: var(--orange); }
+.sidebar ol li:hover::before { color: var(--orange); }
+
+/* ========== MAIN CONTENT ========== */
+main.content { min-width: 0; }
+section.doc-section {
+  padding: 40px 0 60px;
+  border-bottom: 1px solid var(--gray-150);
+  scroll-margin-top: 80px;
+}
+section.doc-section:first-of-type { padding-top: 0; }
+section.doc-section:last-of-type { border-bottom: 0; }
+
+.section-head {
+  display: flex; align-items: baseline; gap: var(--gap-md);
+  margin-bottom: var(--gap-lg);
+}
+.section-num {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--gray-300);
+  font-weight: 700;
+}
+.section-head h2 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -1px;
+  color: var(--black);
+  flex: 1;
+}
+.section-head .square {
+  display: inline-block; width: 16px; height: 16px;
+  background: var(--orange);
+}
+
+main h3 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 28px 0 14px;
+  color: var(--black);
+  display: flex; align-items: center; gap: 10px;
+}
+main h3::before {
+  content: '◇';
+  color: var(--orange);
+  font-size: 0.9rem;
+}
+main h4 {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--gray-700);
+  margin: 22px 0 10px;
+}
+
+main p {
+  margin-bottom: 14px;
+  color: var(--gray-900);
+  line-height: 1.65;
+}
+main p strong { color: var(--black); font-weight: 700; }
+main em { color: var(--gray-700); }
+
+main ul, main ol {
+  margin: 0 0 18px 22px;
+  color: var(--gray-900);
+}
+main li { margin-bottom: 6px; line-height: 1.55; }
+main ul li::marker { color: var(--orange); }
+main ol li::marker { color: var(--orange); font-family: var(--font-mono); font-weight: 600; }
+
+main a:not(.tag):not(.cta) {
+  color: var(--black);
+  border-bottom: 1px dotted var(--gray-400);
+}
+main a:not(.tag):not(.cta):hover {
+  color: var(--orange);
+  border-color: var(--orange);
+}
+
+/* code & inline */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--gray-50);
+  padding: 2px 6px;
+  border: 1px solid var(--gray-150);
+  color: var(--orange);
+  word-break: break-word;
+}
+pre {
+  background: var(--black);
+  color: var(--gray-150);
+  padding: 18px 22px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.6;
+  margin: 16px 0 22px;
+  border-left: 3px solid var(--orange);
+}
+pre code {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  padding: 0;
+}
+
+/* ========== TABELAS ========== */
+.table-wrap {
+  overflow-x: auto;
+  margin: 16px 0 22px;
+  border: 1px solid var(--gray-200);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  background: var(--white);
+}
+thead {
+  background: var(--black);
+  color: var(--white);
+}
+thead th {
+  text-align: left;
+  padding: 12px 16px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  font-weight: 600;
+  border-right: 1px solid var(--gray-700);
+}
+thead th:last-child { border-right: 0; }
+tbody td {
+  padding: 12px 16px;
+  border-top: 1px solid var(--gray-150);
+  border-right: 1px solid var(--gray-150);
+  vertical-align: top;
+}
+tbody td:last-child { border-right: 0; }
+tbody tr:hover { background: var(--orange-soft); }
+tbody td code { background: var(--white); }
+
+/* ========== CARDS / BLOCOS ========== */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--gap-md);
+  margin: 18px 0 24px;
+}
+.card {
+  border: 1px solid var(--gray-200);
+  padding: 20px;
+  background: var(--white);
+  position: relative;
+  transition: border-color .2s, transform .2s;
+}
+.card:hover {
+  border-color: var(--orange);
+  transform: translateY(-2px);
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 16px; height: 16px;
+  background: var(--orange);
+}
+.card h5 {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  margin-bottom: 6px;
+  margin-top: 14px;
+}
+.card .big {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2rem;
+  color: var(--black);
+  margin-bottom: 6px;
+  letter-spacing: -1px;
+}
+.card .desc {
+  font-size: 0.82rem;
+  color: var(--gray-600);
+  line-height: 1.5;
+}
+
+/* callouts */
+.callout {
+  border-left: 3px solid var(--orange);
+  background: var(--orange-soft);
+  padding: 14px 18px;
+  margin: 14px 0 22px;
+  font-size: 0.88rem;
+  color: var(--gray-900);
+}
+.callout.warn { border-left-color: #d97706; background: #fff7ed; }
+.callout.info { border-left-color: #2563eb; background: #eff6ff; }
+.callout.danger { border-left-color: #dc2626; background: #fef2f2; }
+.callout strong {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+  color: var(--black);
+}
+
+/* ========== STEPS DIAGRAMA (canvas-based) ========== */
+.flow-diagram {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  padding: 30px;
+  margin: 22px 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+.flow-diagram canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ========== KPI CHART (canvas) ========== */
+.chart-wrap {
+  border: 1px solid var(--gray-200);
+  padding: 24px;
+  margin: 18px 0 24px;
+  background: var(--white);
+}
+.chart-title {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  margin-bottom: 14px;
+}
+.chart-wrap canvas {
+  width: 100%;
+  display: block;
+}
+
+/* ========== FOOTER ========== */
+footer {
+  background: var(--black);
+  color: var(--gray-300);
+  padding: 60px 40px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+footer .footer-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 40px;
+}
+footer .brand {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--white);
+  font-size: 1rem;
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 10px;
+}
+footer .brand .square { width: 12px; height: 12px; background: var(--orange); display: inline-block; }
+footer p { color: var(--gray-400); line-height: 1.6; max-width: 520px; }
+footer .links {
+  display: flex; flex-direction: column; gap: 8px;
+  text-align: right;
+}
+footer .links a {
+  color: var(--gray-300);
+  border-bottom: 1px dotted #444;
+}
+footer .links a:hover { color: var(--orange); border-color: var(--orange); }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; gap: 30px; }
+  aside.sidebar { position: relative; max-height: none; border-right: 0; padding-right: 0; border-bottom: 1px solid var(--gray-150); padding-bottom: 24px; }
+  .hero h1 { font-size: 2.8rem; }
+  footer .footer-inner { grid-template-columns: 1fr; }
+  footer .links { text-align: left; }
+}
+@media (max-width: 640px) {
+  .navbar { padding: 0 20px; }
+  .hero { padding: 50px 20px 40px; }
+  .layout { padding: 40px 20px 80px; }
+  .hero h1 { font-size: 2.1rem; letter-spacing: -1px; }
+  .section-head h2 { font-size: 1.5rem; }
+  .nav-links { gap: 12px; font-size: 0.7rem; }
+  .nav-links a { font-size: 0.7rem; }
+  pre { font-size: 0.7rem; padding: 14px 16px; }
+  thead th, tbody td { padding: 10px 12px; font-size: 0.78rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<nav class="navbar">
+  <div class="nav-brand">
+    <span class="square"></span>MIRO.EMIDGROUP
+  </div>
+  <div class="nav-links">
+    <a href="#secao-1">DOCUMENTAÇÃO</a>
+    <a href="https://miro.emidgroup.com.br" target="_blank">ABRIR APP <span class="arrow">↗</span></a>
+    <a href="https://github.com/douglasemid/MiroFish" target="_blank">FORK GITHUB <span class="arrow">↗</span></a>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="hero-tags">
+    <span class="tag orange"><span class="dot"></span>VERSÃO 1.0</span>
+    <span class="tag"><span class="square"></span>DOCUMENTAÇÃO TÉCNICA</span>
+    <span class="tag">PT-BR</span>
+    <span class="tag">EMIDGROUP</span>
+  </div>
+
+  <h1>Documentação<br>EMIDGROUP<span class="blink">_</span></h1>
+
+  <p class="lead">
+    Dossiê completo do <strong>Miro.EMIDGROUP</strong> — modus operandi, variáveis técnicas, fórmula
+    de custo, integrações de LLM, exemplos de prompt avançado e operação no servidor. Tudo o que foi
+    construído, traduzido e adaptado para a infraestrutura EMIDGROUP.
+  </p>
+
+  <div class="hero-meta">
+    <div class="meta-item">
+      <div class="meta-label">DOMÍNIO</div>
+      <div class="meta-value"><a href="https://miro.emidgroup.com.br" target="_blank">miro.emidgroup.com.br</a></div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">FORK</div>
+      <div class="meta-value"><a href="https://github.com/douglasemid/MiroFish" target="_blank">douglasemid/MiroFish</a></div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">UPSTREAM</div>
+      <div class="meta-value"><a href="https://github.com/666ghj/MiroFish" target="_blank">666ghj/MiroFish</a></div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">LICENÇA</div>
+      <div class="meta-value">AGPL-3.0</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">LLM ATIVO</div>
+      <div class="meta-value">qwen-plus (Alibaba)</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">DATA</div>
+      <div class="meta-value">Abril / 2026</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ LAYOUT ============ -->
+<div class="layout">
+
+  <!-- ====== SIDEBAR ====== -->
+  <aside class="sidebar">
+    <h4>// SUMÁRIO</h4>
+    <ol>
+      <li><a href="#secao-1">Visão geral</a></li>
+      <li><a href="#secao-2">Tradução PT-BR</a></li>
+      <li><a href="#secao-3">Variáveis de ambiente</a></li>
+      <li><a href="#secao-4">Modus operandi</a></li>
+      <li><a href="#secao-5">Custo e dimensionamento</a></li>
+      <li><a href="#secao-6">Provedores de LLM</a></li>
+      <li><a href="#secao-7">LLMs locais — viabilidade</a></li>
+      <li><a href="#secao-8">UI vs .env</a></li>
+      <li><a href="#secao-9">Construindo um prompt</a></li>
+      <li><a href="#secao-10">Exemplo: 200 ISPs</a></li>
+      <li><a href="#secao-11">Operação no servidor</a></li>
+      <li><a href="#secao-12">Observações avançadas</a></li>
+    </ol>
+  </aside>
+
+  <!-- ====== MAIN ====== -->
+  <main class="content">
+
+    <!-- ========== SECAO 1 ========== -->
+    <section id="secao-1" class="doc-section">
+      <div class="section-head"><span class="section-num">01</span><span class="square"></span><h2>Visão geral do projeto</h2></div>
+
+      <h3>O que é o MiroFish</h3>
+      <p><strong>MiroFish</strong> é um motor de simulação de inteligência coletiva baseado em multi-agentes LLM. A partir de um material-semente (PDF, MD, TXT), ele:</p>
+      <ol>
+        <li>Extrai entidades, gera personas com personalidade, memória de longo prazo e lógica própria</li>
+        <li>Constrói automaticamente um "mundo digital paralelo" usando o framework <strong>OASIS</strong> (CAMEL-AI) que simula plataformas estilo Twitter e Reddit</li>
+        <li>Coloca centenas/milhares de agentes para interagir nesse mundo durante N rodadas de tempo simulado</li>
+        <li>Um <strong>Report Agent</strong> analisa toda a simulação e devolve um relatório de previsão estruturado</li>
+      </ol>
+
+      <h4>// CASOS DE USO TÍPICOS</h4>
+      <div class="cards">
+        <div class="card">
+          <h5>VENDAS</h5>
+          <div class="big">B2B</div>
+          <div class="desc">Teste de pitch antes de uma rodada real de prospecção</div>
+        </div>
+        <div class="card">
+          <h5>MARKETING</h5>
+          <div class="big">RISCO</div>
+          <div class="desc">Análise de risco reputacional de campanha ou anúncio</div>
+        </div>
+        <div class="card">
+          <h5>PRODUTO</h5>
+          <div class="big">ICP</div>
+          <div class="desc">Refinamento de Ideal Customer Profile e perfil do comprador</div>
+        </div>
+        <div class="card">
+          <h5>NARRATIVA</h5>
+          <div class="big">FICÇÃO</div>
+          <div class="desc">Exploração de finais alternativos para roteiros e literatura</div>
+        </div>
+      </div>
+
+      <h3>Stack técnica</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Camada</th><th>Tecnologia</th></tr></thead>
+        <tbody>
+          <tr><td>Backend</td><td><code>Python 3.11+</code> + Flask 3 + Flask-CORS — porta interna 5001</td></tr>
+          <tr><td>Frontend</td><td><code>Vue 3</code> + Vite 7 + vue-router + vue-i18n + d3 + axios — porta interna 3000</td></tr>
+          <tr><td>Engine de simulação</td><td><code>camel-oasis 0.2.5</code> + camel-ai 0.2.78</td></tr>
+          <tr><td>LLM</td><td>API externa OpenAI-compatible (qualquer provedor)</td></tr>
+          <tr><td>Memória de agentes</td><td><code>Zep Cloud</code> (SaaS, free tier inicial)</td></tr>
+          <tr><td>Empacotamento</td><td>Docker — imagem <code>mirofish-pt:local</code> (build do fork)</td></tr>
+          <tr><td>Persistência</td><td>Sem banco próprio — apenas <code>./backend/uploads</code> em volume</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Infraestrutura na VPS EMIDGROUP</h3>
+      <div class="cards">
+        <div class="card"><h5>HOST</h5><div class="big" style="font-size:1.1rem">187.77.234.102</div><div class="desc">Ubuntu, 2 vCPUs, 7,8 GB RAM</div></div>
+        <div class="card"><h5>SSL</h5><div class="big" style="font-size:1.1rem">Let's Encrypt</div><div class="desc">Válido até 2026-07-06, auto-renovação</div></div>
+        <div class="card"><h5>NETWORK</h5><div class="big" style="font-size:1.1rem">app_rastelli-net</div><div class="desc">Compartilhada (sem mistura)</div></div>
+        <div class="card"><h5>RAM IDLE</h5><div class="big">~500MB</div><div class="desc">1% CPU em estado ocioso</div></div>
+      </div>
+
+      <h3>Coexistência com Rastelli Vineyards (sem conflito)</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Sistema</th><th>Domínio</th><th>Pasta</th><th>Containers</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Rastelli</strong></td><td>app.rastellivineyards.com.br</td><td><code>/home/deploy/app/</code></td><td>5 containers</td></tr>
+          <tr><td><strong>Miro.EMIDGROUP</strong></td><td>miro.emidgroup.com.br</td><td><code>/home/deploy/mirofish/</code></td><td><code>mirofish</code></td></tr>
+        </tbody>
+      </table></div>
+      <p>Compartilham apenas o <strong>Nginx</strong> (server blocks distintos) e a rede Docker, sem qualquer mistura de dados, código ou configuração.</p>
+    </section>
+
+    <!-- ========== SECAO 2 ========== -->
+    <section id="secao-2" class="doc-section">
+      <div class="section-head"><span class="section-num">02</span><span class="square"></span><h2>Tradução completa para PT-BR</h2></div>
+
+      <p>O MiroFish nativo só tem dois idiomas de UI traduzidos: <strong>Chinês (zh)</strong> e <strong>Inglês (en)</strong>. Para o português, havia entrada em <code>locales/languages.json</code> mas <em>só servia para instruir o LLM</em> — não tinha arquivo de tradução de UI.</p>
+
+      <h3>O que foi feito</h3>
+      <ol>
+        <li><strong>Criação de <code>locales/pt.json</code></strong> com <strong>646 strings</strong> traduzidas a partir de <code>locales/en.json</code>, mantendo todas as chaves originais e placeholders intactos.</li>
+        <li><strong>Definição de PT-BR como idioma padrão</strong> em <code>frontend/src/i18n/index.js</code>:</li>
+      </ol>
+<pre><code>const savedLocale = localStorage.getItem('locale') || 'pt'   // antes era 'zh'
+const i18n = createI18n({
+  legacy: false,
+  locale: savedLocale,
+  fallbackLocale: 'en',                                       // antes era 'zh'
+  messages
+})</code></pre>
+
+      <ol start="3">
+        <li><strong>Refinamento da instrução LLM</strong> em <code>locales/languages.json</code>:</li>
+      </ol>
+<pre><code>"pt": {
+  "label": "Português (BR)",
+  "llmInstruction": "Por favor, responda sempre em português brasileiro
+  (pt-BR), usando vocabulário, gramática e expressões naturais do Brasil.
+  Não use português europeu."
+}</code></pre>
+
+      <ol start="4">
+        <li><strong>Replicação de regras CSS</strong> de <code>html[lang="en"]</code> para <code>html[lang="pt"]</code> usando o seletor moderno <code>:is()</code>, em três arquivos: <code>Home.vue</code>, <code>Step4Report.vue</code>, <code>Step5Interaction.vue</code>. Necessário porque palavras em PT são significativamente mais longas que em chinês.</li>
+        <li><strong>Edição do <code>frontend/index.html</code></strong> para que o HTML estático já carregue em PT-BR antes do Vue inicializar (lang, title, meta description).</li>
+      </ol>
+
+      <div class="callout info">
+        <strong>// VALIDAÇÃO ESTRUTURAL</strong>
+        Após a tradução, foi rodada comparação automática entre <code>en.json</code> e <code>pt.json</code>:
+        <code>en keys: 646</code> · <code>pt keys: 646</code> · <code>missing: 0</code> · <code>extra: 0</code> — 100% de paridade.
+      </div>
+
+      <h3>Como o sistema de i18n funciona internamente</h3>
+      <p><strong>Frontend (Vue + vue-i18n):</strong> auto-carrega qualquer arquivo <code>locales/*.json</code> registrado em <code>languages.json</code>. Salva escolha em <code>localStorage</code> sob a chave <code>locale</code>. O componente <code>LanguageSwitcher.vue</code> permite trocar dinamicamente.</p>
+      <p><strong>Backend (Flask):</strong> lê o header HTTP <code>Accept-Language</code> enviado pelo frontend. A função <code>get_language_instruction()</code> retorna o <code>llmInstruction</code> do <code>languages.json</code> para injetar nos prompts do LLM.</p>
+      <p>O sistema é elegante e plug-and-play: adicionar um novo idioma exige apenas criar o arquivo <code>&lt;codigo&gt;.json</code> e registrar no <code>languages.json</code>. Nenhuma mudança de código backend necessária.</p>
+    </section>
+
+    <!-- ========== SECAO 3 ========== -->
+    <section id="secao-3" class="doc-section">
+      <div class="section-head"><span class="section-num">03</span><span class="square"></span><h2>Variáveis de ambiente</h2></div>
+
+      <p>Todas as variáveis abaixo estão definidas em <code>backend/app/config.py</code> e podem ser configuradas via arquivo <code>.env</code> em <code>/home/deploy/mirofish/.env</code>.</p>
+
+      <h3>Obrigatórias</h3>
+      <div class="callout danger"><strong>// SEM ISSO O BACKEND NÃO INICIA</strong>A função <code>Config.validate()</code> aborta a inicialização se qualquer das duas estiver ausente.</div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Variável</th><th>Default</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><code>LLM_API_KEY</code></td><td>—</td><td>Chave da API do LLM (qualquer provedor OpenAI-compatible)</td></tr>
+          <tr><td><code>ZEP_API_KEY</code></td><td>—</td><td>Chave do Zep Cloud (memória de longo prazo)</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>LLM principal</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Variável</th><th>Default</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><code>LLM_BASE_URL</code></td><td><code>https://api.openai.com/v1</code></td><td>Endpoint OpenAI-compatible</td></tr>
+          <tr><td><code>LLM_MODEL_NAME</code></td><td><code>gpt-4o-mini</code></td><td>Nome do modelo</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>LLM acelerador (opcional)</h3>
+      <p>Permite usar <strong>dois LLMs em paralelo</strong>: um pesado para tarefas críticas e um barato para os ticks de agente.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Variável</th><th>Default</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><code>LLM_BOOST_API_KEY</code></td><td>vazio</td><td>Chave do acelerador</td></tr>
+          <tr><td><code>LLM_BOOST_BASE_URL</code></td><td>vazio</td><td>Endpoint do acelerador</td></tr>
+          <tr><td><code>LLM_BOOST_MODEL_NAME</code></td><td>vazio</td><td>Modelo (ex: <code>qwen-turbo</code>)</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout warn"><strong>// IMPORTANTE</strong>Se não vai usar o acelerador, <strong>não inclua essas variáveis no .env</strong> — nem mesmo vazias. A presença com valores em branco pode causar erros.</div>
+      <div class="callout"><strong>// ESTRATÉGIA DE ECONOMIA</strong>Configure principal=<code>qwen-plus</code> + acelerador=<code>qwen-turbo</code>. Pode reduzir o custo total em <strong>60-80%</strong>.</div>
+
+      <h3>Simulação OASIS</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Variável</th><th>Default</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><code>OASIS_DEFAULT_MAX_ROUNDS</code></td><td><code>10</code></td><td>Rodadas (ticks de tempo) por simulação. Sobrescritível na UI.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Report Agent</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Variável</th><th>Default</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><code>REPORT_AGENT_MAX_TOOL_CALLS</code></td><td><code>5</code></td><td>Máximo de chamadas de ferramentas por seção</td></tr>
+          <tr><td><code>REPORT_AGENT_MAX_REFLECTION_ROUNDS</code></td><td><code>2</code></td><td>Rodadas de auto-reflexão antes de finalizar</td></tr>
+          <tr><td><code>REPORT_AGENT_TEMPERATURE</code></td><td><code>0.5</code></td><td>0=preciso, 1=criativo</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Flask / infraestrutura</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Variável</th><th>Default</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><code>SECRET_KEY</code></td><td><code>mirofish-secret-key</code></td><td>Chave de sessão. Trocar em produção.</td></tr>
+          <tr><td><code>FLASK_DEBUG</code></td><td><code>True</code></td><td>Debug + hot-reload. Recomendado <code>False</code> em produção.</td></tr>
+          <tr><td><code>FLASK_HOST</code></td><td><code>0.0.0.0</code></td><td>Bind address</td></tr>
+          <tr><td><code>FLASK_PORT</code></td><td><code>5001</code></td><td>Porta interna</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Constantes hardcoded</h3>
+      <p>Estas estão em código e exigem alterar o fonte para mudar:</p>
+      <ul>
+        <li><code>MAX_CONTENT_LENGTH = 50 MB</code> → upload máximo</li>
+        <li><code>ALLOWED_EXTENSIONS = {pdf, md, txt, markdown}</code></li>
+        <li><code>DEFAULT_CHUNK_SIZE = 500</code> · <code>DEFAULT_CHUNK_OVERLAP = 50</code></li>
+      </ul>
+
+      <h3>Configuração atual em produção</h3>
+<pre><code># LLM principal — Alibaba Model Studio (Singapore / Internacional)
+LLM_API_KEY=sk-a36****6649
+LLM_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1
+LLM_MODEL_NAME=qwen-plus
+
+# Zep Cloud — memória de agentes
+ZEP_API_KEY=z_****[OK]
+
+# (Acelerador comentado — pode ser ativado quando necessário)
+# LLM_BOOST_API_KEY=sk-...
+# LLM_BOOST_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1
+# LLM_BOOST_MODEL_NAME=qwen-turbo</code></pre>
+    </section>
+
+    <!-- ========== SECAO 4 ========== -->
+    <section id="secao-4" class="doc-section">
+      <div class="section-head"><span class="section-num">04</span><span class="square"></span><h2>Modus operandi de uma simulação</h2></div>
+
+      <h3>Os dois eixos independentes</h3>
+      <p>Antes de tudo, é fundamental entender que uma simulação tem <strong>dois eixos completamente separados</strong>:</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Eixo</th><th>O que controla</th><th>Onde se ajusta</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Quantidade de agentes</strong> ("pessoas")</td><td>Quantas personas o LLM gera (50, 100, 500, 1000+)</td><td><strong>Implícito</strong>: LLM decide pelo prompt + documento. Visualizado no Step 2.</td></tr>
+          <tr><td><strong>Quantidade de rodadas</strong> (ticks)</td><td>Por quantos ticks o relógio do mundo simulado avança</td><td><strong>Explícito</strong>: <code>OASIS_DEFAULT_MAX_ROUNDS</code> ou toggle "Personalizado" no Step 2</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="callout info"><strong>// ANALOGIA</strong>Pense em um jogo tipo The Sims. <strong>Agentes</strong> = quantas pessoas existem na cidade. <strong>Rodadas</strong> = quantos "dias" o jogo roda antes de você apertar pause.</div>
+
+      <h3>O que acontece em cada rodada</h3>
+      <p>Cada rodada é um <strong>tick de tempo no mundo simulado</strong>. Por exemplo, se a simulação representa 24h reais distribuídas em 10 rodadas, cada rodada equivale a ~2,4h do mundo simulado.</p>
+      <ol>
+        <li>Cada agente é "acordado" pelo motor OASIS</li>
+        <li>O LLM é chamado <strong>uma vez por agente</strong> para decidir a ação: postar, curtir, comentar, seguir, repostar, ficar quieto</li>
+        <li>As ações acontecem no Twitter/Reddit simulado (memória no Zep)</li>
+        <li>Sistema atualiza memórias, conexões sociais, viralidade, tópicos em alta</li>
+        <li>Avança para a próxima rodada</li>
+      </ol>
+
+      <h3>As 5 etapas (Steps) da UI</h3>
+      <div class="cards">
+        <div class="card"><h5>STEP 01</h5><div class="big">GRAFO</div><div class="desc">Upload + prompt → ontologia → GraphRAG no Zep</div></div>
+        <div class="card"><h5>STEP 02</h5><div class="big">SETUP</div><div class="desc">Personas geradas + config de mundo + ajuste de rodadas</div></div>
+        <div class="card"><h5>STEP 03</h5><div class="big">SIMULAR</div><div class="desc">Loop de M rodadas × N agentes em paralelo (Twitter + Reddit)</div></div>
+        <div class="card"><h5>STEP 04</h5><div class="big">REPORT</div><div class="desc">Report Agent gera relatório multi-seção via ReACT</div></div>
+        <div class="card"><h5>STEP 05</h5><div class="big">CHAT</div><div class="desc">Conversar com agentes / surveys / drill-down</div></div>
+      </div>
+
+      <h3>Fluxo simplificado</h3>
+      <div class="flow-diagram">
+        <canvas id="flowCanvas" width="900" height="320"></canvas>
+      </div>
+    </section>
+
+    <!-- ========== SECAO 5 ========== -->
+    <section id="secao-5" class="doc-section">
+      <div class="section-head"><span class="section-num">05</span><span class="square"></span><h2>Fórmula de custo e dimensionamento</h2></div>
+
+      <h3>A fórmula básica</h3>
+<pre><code>chamadas LLM totais ≈ rodadas × agentes
+custo total ≈ chamadas × custo_médio_por_chamada + overhead</code></pre>
+
+      <p>O <strong>overhead</strong> inclui geração de personas, construção de ontologia, configuração de plataforma, planejamento e geração do relatório. Pode somar de 10% a 50% além do cálculo básico.</p>
+
+      <h3>Tabela de referência (Qwen-Plus)</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Cenário</th><th>Agentes</th><th>Rodadas</th><th>Chamadas LLM</th><th>Custo aprox.</th></tr></thead>
+        <tbody>
+          <tr><td>Teste mínimo</td><td>20</td><td>5</td><td>~100</td><td>~US$ 0,05</td></tr>
+          <tr><td>Teste pequeno</td><td>50</td><td>10</td><td>~500</td><td>~US$ 0,15</td></tr>
+          <tr><td>Padrão</td><td>100</td><td>10</td><td>~1.000</td><td>~US$ 0,30</td></tr>
+          <tr><td>Médio</td><td>100</td><td>40</td><td>~4.000</td><td>~US$ 1,20</td></tr>
+          <tr><td>Médio-longo</td><td>200</td><td>30</td><td>~6.000</td><td>~US$ 1,80</td></tr>
+          <tr><td>Grande</td><td>500</td><td>100</td><td>~50.000</td><td>~US$ 15,00</td></tr>
+          <tr><td>Massivo</td><td>5.000</td><td>100</td><td>~500.000</td><td>~US$ 150,00</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="callout warn"><strong>// ATENÇÃO</strong>O custo real pode ser <strong>2x a 5x maior</strong> que essa estimativa devido ao overhead e ao tamanho variável do contexto acumulado conforme a simulação progride.</div>
+
+      <h3>Comparativo entre modelos</h3>
+      <p>Mesma simulação de 200 agentes × 10 rodadas (~2.000 chamadas):</p>
+      <div class="chart-wrap">
+        <div class="chart-title">// CUSTO ESTIMADO POR MODELO (US$)</div>
+        <canvas id="costChart" width="900" height="320"></canvas>
+      </div>
+
+      <h3>Recomendação para começar</h3>
+      <div class="callout"><strong>// COMECE AQUI</strong>Mantenha <code>OASIS_DEFAULT_MAX_ROUNDS=10</code> e use <code>qwen-plus</code> (já configurado em produção). É o equilíbrio mais saudável entre custo e qualidade. Quando estiver confortável: ative o acelerador <code>qwen-turbo</code> para reduzir custo, ou troque para <code>claude-sonnet-4-6</code> via OpenRouter para elevar qualidade.</div>
+    </section>
+
+    <!-- ========== SECAO 6 ========== -->
+    <section id="secao-6" class="doc-section">
+      <div class="section-head"><span class="section-num">06</span><span class="square"></span><h2>Provedores de LLM compatíveis</h2></div>
+
+      <p>O MiroFish aceita <strong>qualquer API que fale o formato OpenAI SDK</strong>. Isso abre um leque enorme.</p>
+
+      <h3>Alibaba Model Studio (atualmente em uso)</h3>
+      <ul>
+        <li><strong>Endpoint internacional:</strong> <code>https://dashscope-intl.aliyuncs.com/compatible-mode/v1</code></li>
+        <li><strong>Modelos:</strong> <code>qwen-plus</code>, <code>qwen-turbo</code>, <code>qwen-max</code>, <code>qwen3.5-plus</code>, <code>qwen3-max</code></li>
+        <li><strong>Cadastro:</strong> <a href="https://modelstudio.console.alibabacloud.com/" target="_blank">modelstudio.console.alibabacloud.com</a></li>
+        <li><strong>Notas:</strong> ótimo custo-benefício, bom em PT-BR, free quota inicial generoso</li>
+      </ul>
+
+      <h3>Anthropic Claude (via OpenRouter — recomendado)</h3>
+      <p>A Anthropic tem formato próprio incompatível com OpenAI SDK. O caminho mais simples para usar Claude no MiroFish é via <strong>OpenRouter</strong>, um gateway unificado.</p>
+<pre><code>LLM_API_KEY=sk-or-v1-sua-chave-openrouter
+LLM_BASE_URL=https://openrouter.ai/api/v1
+LLM_MODEL_NAME=anthropic/claude-haiku-4-5</code></pre>
+
+      <div class="table-wrap"><table>
+        <thead><tr><th>Modelo Claude</th><th>ID OpenRouter</th><th>Custo (input)</th></tr></thead>
+        <tbody>
+          <tr><td>Haiku</td><td><code>anthropic/claude-haiku-4-5</code></td><td>~US$ 1/M tokens</td></tr>
+          <tr><td>Sonnet</td><td><code>anthropic/claude-sonnet-4-6</code></td><td>~US$ 3/M tokens</td></tr>
+          <tr><td>Opus</td><td><code>anthropic/claude-opus-4-6</code></td><td>~US$ 15/M tokens</td></tr>
+        </tbody>
+      </table></div>
+
+      <p><strong>Vantagens do OpenRouter:</strong> não precisa criar conta na Anthropic; acesso a 200+ modelos (GPT, Claude, Gemini, Llama, Qwen, DeepSeek, Mistral); failover automático; trocar de modelo = trocar 1 string no <code>.env</code>. <strong>Custo:</strong> ~5% de markup sobre o preço direto.</p>
+
+      <h3>Outras opções OpenAI-compatible</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Provedor</th><th>Endpoint</th><th>Notas</th></tr></thead>
+        <tbody>
+          <tr><td><strong>OpenAI</strong></td><td><code>api.openai.com/v1</code></td><td>gpt-4o-mini, gpt-4o, o1-mini</td></tr>
+          <tr><td><strong>DeepSeek</strong></td><td><code>api.deepseek.com/v1</code></td><td>Chinês, MUITO barato, qualidade alta</td></tr>
+          <tr><td><strong>Groq</strong></td><td><code>api.groq.com/openai/v1</code></td><td>Llama em hardware proprietário, ultra rápido. <strong>Free tier generoso</strong></td></tr>
+          <tr><td><strong>Cerebras</strong></td><td><code>api.cerebras.ai/v1</code></td><td>Similar ao Groq, free tier</td></tr>
+          <tr><td><strong>Together.ai</strong></td><td><code>api.together.xyz/v1</code></td><td>Llama, Qwen, Mistral. Free credits no signup</td></tr>
+          <tr><td><strong>Mistral</strong></td><td><code>api.mistral.ai/v1</code></td><td>Modelos europeus</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- ========== SECAO 7 ========== -->
+    <section id="secao-7" class="doc-section">
+      <div class="section-head"><span class="section-num">07</span><span class="square"></span><h2>LLMs locais — viabilidade</h2></div>
+
+      <h3>A pergunta</h3>
+      <blockquote class="callout"><em>"É possível usar LLMs gratuitas que são instaláveis na VPS? Como Llama ou similar?"</em></blockquote>
+
+      <h3>A resposta honesta</h3>
+      <div class="callout danger"><strong>// VEREDITO</strong>Tecnicamente sim. Na prática, na sua VPS atual, <strong>NÃO</strong>.</div>
+
+      <h3>Por quê?</h3>
+      <p>Sua VPS tem <strong>2 vCPUs, 7,8 GB RAM, sem GPU</strong>. LLMs locais minimamente úteis exigem GPU com VRAM ou CPU + muita RAM (16+ GB), e mesmo assim ficam <strong>extremamente lentos</strong>.</p>
+
+      <h3>Tabela de tempo por chamada LLM</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Modelo</th><th>Hardware</th><th>Tempo por resposta</th></tr></thead>
+        <tbody>
+          <tr><td>Llama 3.2 1B</td><td>CPU 2-core</td><td>~10-30s</td></tr>
+          <tr><td>Llama 3 8B Q4</td><td>CPU 2-core</td><td>~60-180s</td></tr>
+          <tr><td>Qwen-Plus (cloud)</td><td>API</td><td>~1-2s</td></tr>
+          <tr><td>Claude Haiku (cloud)</td><td>API</td><td>~1-3s</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>O efeito disso no MiroFish</h3>
+<pre><code>2.000 chamadas × 60s = 120.000 segundos = 33 HORAS por simulação</code></pre>
+      <p>E ainda com qualidade muito pior. <strong>Inviável.</strong></p>
+
+      <h3>Alternativa pragmática: Groq</h3>
+      <p>Se a motivação é "Llama de graça", crie conta no <strong>Groq</strong>. Free tier generoso, modelos Llama/Mixtral/Gemma rodando em hardware proprietário (~500 tokens/seg).</p>
+<pre><code>LLM_BASE_URL=https://api.groq.com/openai/v1
+LLM_MODEL_NAME=llama-3.3-70b-versatile
+LLM_API_KEY=gsk_...</code></pre>
+    </section>
+
+    <!-- ========== SECAO 8 ========== -->
+    <section id="secao-8" class="doc-section">
+      <div class="section-head"><span class="section-num">08</span><span class="square"></span><h2>Configuração: UI vs .env</h2></div>
+
+      <h3>Configurável pela UI (por simulação)</h3>
+      <ul>
+        <li>Prompt da simulação (linguagem natural)</li>
+        <li>Upload do material-semente</li>
+        <li>Número de rodadas (toggle "Personalizado" no Step 2)</li>
+        <li>Visualização das personas geradas</li>
+        <li>Visualização da config de plataforma (não editável)</li>
+        <li>Visualização dos tópicos iniciais</li>
+      </ul>
+
+      <h3>Só configurável via .env (variáveis globais)</h3>
+      <ul>
+        <li>Chaves de API (LLM e Zep)</li>
+        <li>Modelo do LLM</li>
+        <li>Endpoint base</li>
+        <li>LLM acelerador</li>
+        <li>Temperatura e limites do Report Agent</li>
+        <li>Default de rodadas (sobrescritível na UI)</li>
+        <li>Modo debug do Flask</li>
+      </ul>
+
+      <div class="callout warn"><strong>// NÃO TEM PAINEL ADMIN</strong>Não existe tela tipo <code>/admin/settings</code>. Mudanças no <code>.env</code> exigem editar o arquivo no servidor e dar restart no container.</div>
+
+      <h3>Como aplicar mudanças no .env</h3>
+<pre><code>ssh -i ~/.ssh/id_ed25519 root@187.77.234.102
+nano /home/deploy/mirofish/.env
+# editar variáveis, Ctrl+O para salvar, Ctrl+X para sair
+cd /home/deploy/mirofish && docker compose restart
+docker logs -f mirofish</code></pre>
+    </section>
+
+    <!-- ========== SECAO 9 ========== -->
+    <section id="secao-9" class="doc-section">
+      <div class="section-head"><span class="section-num">09</span><span class="square"></span><h2>Como construir um prompt eficaz</h2></div>
+
+      <p>A qualidade da simulação depende <strong>80% da qualidade do prompt + do material-semente</strong>. Um prompt vago gera personas genéricas. Um prompt cirúrgico produz insights acionáveis.</p>
+
+      <h3>Anatomia de um bom prompt MiroFish</h3>
+      <div class="cards">
+        <div class="card"><h5>01</h5><div class="big">CONTEXTO</div><div class="desc">Quem é o público simulado: perfil sócio-demográfico, características, dores</div></div>
+        <div class="card"><h5>02</h5><div class="big">ESTÍMULO</div><div class="desc">O evento, oferta ou material que dispara a simulação</div></div>
+        <div class="card"><h5>03</h5><div class="big">VARIÁVEIS</div><div class="desc">O que pode mudar entre os agentes (heterogeneidade)</div></div>
+        <div class="card"><h5>04</h5><div class="big">OBJETIVO</div><div class="desc">O que você quer prever ou medir</div></div>
+        <div class="card"><h5>05</h5><div class="big">RESTRIÇÕES</div><div class="desc">Limites de tamanho, escopo, tempo simulado</div></div>
+      </div>
+
+      <h3>Material-semente: o segundo pilar</h3>
+      <p>O LLM precisa de <strong>contexto rico</strong> para construir personas realistas. Tipos de material úteis:</p>
+      <ul>
+        <li>Roteiros de pitch / scripts comerciais</li>
+        <li>Propostas comerciais completas</li>
+        <li>Pesquisas de mercado / relatórios setoriais</li>
+        <li>Personas de clientes anteriores (mesmo fictícias)</li>
+        <li>Listas de objeções comuns já ouvidas</li>
+        <li>Tabelas de preços + comparativos</li>
+        <li>Briefings de campanha · releases · capítulos</li>
+      </ul>
+      <div class="callout"><strong>// MÍNIMO VIÁVEL</strong>Se for subir só 1 documento, consolide os mais importantes em um único PDF de até 30 páginas. Sem material rico, a simulação inventa coisas.</div>
+    </section>
+
+    <!-- ========== SECAO 10 ========== -->
+    <section id="secao-10" class="doc-section">
+      <div class="section-head"><span class="section-num">10</span><span class="square"></span><h2>Exemplo: proposta para 200 ISPs</h2></div>
+
+      <p><strong>Caso de uso:</strong> simular a recepção de uma proposta comercial de serviços de marketing por aproximadamente 200 donos de provedores regionais de internet brasileiros, para prever taxa de fechamento e capturar objeções qualitativas.</p>
+
+      <h3>O prompt completo</h3>
+<pre><code>Simule a recepção de uma proposta comercial de serviços de marketing
+por aproximadamente 200 donos de provedores regionais de internet (ISPs)
+brasileiros, considerando o perfil descrito a seguir.
+
+PERFIL DOS AGENTES (~200 personas):
+Donos ou sócios-administradores de provedores de internet de pequeno e
+médio porte no Brasil, com 500 a 15.000 assinantes ativos. Distribuídos
+por diferentes regiões. Maioria com formação técnica, entre 30 e 55 anos,
+autodidatas em gestão, fundadores que cresceram organicamente.
+Compartilham as seguintes dores:
+
+- Marketing rudimentar (boca a boca, panfletos, Facebook ads sem estratégia)
+- Concorrência crescente de grandes operadoras e ISPs maiores
+- Churn alto sem mensuração precisa
+- Equipe interna sem skill de marketing digital
+- Desconfiança histórica de agências (já foram queimados antes)
+- Foco operacional em detrimento do crescimento de receita
+- Decisão de compra rápida quando enxergam ROI claro, mas céticos por padrão
+
+Distribua entre eles personas heterogêneas: alguns mais analíticos, outros
+mais relacionais, alguns early adopters, outros conservadores. Inclua
+variações de humor inicial (cético, neutro, entusiasmado).
+
+ESTÍMULO (evento da simulação):
+Cada agente recebeu o pitch comercial em anexo (PDF) e participou de uma
+call remota one-to-one de 45 minutos com o vendedor da [SEU NOME / EMPRESA].
+Após a call, têm acesso a um "feed simulado" estilo grupo de WhatsApp de
+donos de provedores, onde podem comentar a proposta entre si, tirar dúvidas,
+compartilhar receios, e influenciar uns aos outros ao longo de ~7 dias
+simulados antes de decidir fechar ou não.
+
+VARIÁVEIS QUE QUERO OBSERVAR:
+- Quem fecha imediatamente após a call (24h)
+- Quem fecha depois de discutir com pares (72h+)
+- Quem rejeita imediatamente e por quê
+- Quem fica em "vou pensar" indefinido
+- Quais objeções aparecem com mais frequência
+- Como o sentimento coletivo evolui ao longo dos dias
+- Se algum "líder de opinião" emerge no grupo
+
+OBJETIVOS DE PREVISÃO:
+1. Estimativa quantitativa de fechamento: % em 7 dias, segmentado
+   por porte (pequeno vs médio) e por região
+2. Top 5 objeções qualitativas: argumentos contrários e como reagi-los
+3. Top 5 ganchos positivos: o que mais ressoou e deve ser amplificado
+4. Perfil do comprador ideal (ICP refinado)
+5. Sugestões de ajuste no pitch
+6. Risco reputacional
+
+HORIZONTE TEMPORAL:
+Simule 7 dias de tempo decorrido após a call.</code></pre>
+
+      <h3>Material-semente recomendado</h3>
+      <ol>
+        <li>Sua proposta comercial completa (5-15 páginas)</li>
+        <li><strong>Roteiro/script do pitch de vendas</strong> (transcrição da call de 45 min) — fundamental</li>
+        <li>Pesquisa de mercado de ISPs brasileiros (ANATEL, Telebrasil, ABRINT)</li>
+        <li>3-5 personas de clientes anteriores (mesmo fictícias)</li>
+        <li>Lista de objeções comuns já ouvidas — ouro puro</li>
+        <li>Tabela de preços + comparativo com concorrentes</li>
+      </ol>
+
+      <h3>Configuração técnica recomendada</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Parâmetro</th><th>Valor sugerido</th><th>Por quê</th></tr></thead>
+        <tbody>
+          <tr><td><code>OASIS_DEFAULT_MAX_ROUNDS</code></td><td><strong>30 a 50</strong></td><td>7 dias / N rodadas → cada uma representa algumas horas</td></tr>
+          <tr><td><code>LLM_MODEL_NAME</code></td><td><code>qwen-plus</code> ou <code>claude-haiku-4-5</code></td><td>Personas críticas precisam de qualidade</td></tr>
+          <tr><td><code>LLM_BOOST_MODEL_NAME</code></td><td><code>qwen-turbo</code></td><td>Modelo barato para os ticks de agente</td></tr>
+          <tr><td><code>REPORT_AGENT_TEMPERATURE</code></td><td><code>0.3</code></td><td>Relatório analítico, não criativo</td></tr>
+          <tr><td><code>REPORT_AGENT_MAX_TOOL_CALLS</code></td><td><code>8</code></td><td>Mais investigação por seção</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Custo estimado e estratégia</h3>
+      <ul>
+        <li>Com Qwen-Plus + Qwen-Turbo: <strong>US$ 2 a US$ 5</strong></li>
+        <li>Com Claude Haiku via OpenRouter: <strong>US$ 8 a US$ 15</strong></li>
+      </ul>
+      <div class="callout info"><strong>// ESTRATÉGIA EM DUAS FASES</strong>
+        <strong>Fase 1 (validação):</strong> rode primeiro com 20 agentes (~US$ 0,20) só para validar que sai sem erro e o relatório serve.<br>
+        <strong>Fase 2 (produção):</strong> só depois rode com 200 agentes para valer.</div>
+    </section>
+
+    <!-- ========== SECAO 11 ========== -->
+    <section id="secao-11" class="doc-section">
+      <div class="section-head"><span class="section-num">11</span><span class="square"></span><h2>Operação no servidor</h2></div>
+
+      <p>Todos os comandos abaixo assumem que você já está conectado via SSH:</p>
+<pre><code>ssh -i ~/.ssh/id_ed25519 root@187.77.234.102</code></pre>
+
+      <h3>Container do MiroFish</h3>
+<pre><code># Logs em tempo real
+docker logs -f mirofish
+
+# Reiniciar
+cd /home/deploy/mirofish && docker compose restart
+
+# Parar / subir
+cd /home/deploy/mirofish && docker compose down
+cd /home/deploy/mirofish && docker compose up -d
+
+# Recriar (aplica mudanças no compose)
+cd /home/deploy/mirofish && docker compose up -d --force-recreate
+
+# Status / consumo
+docker ps --filter name=mirofish
+docker stats --no-stream mirofish</code></pre>
+
+      <h3>Atualizar variáveis de ambiente</h3>
+<pre><code>nano /home/deploy/mirofish/.env
+
+# Trocar modelo rapidamente
+sed -i 's/LLM_MODEL_NAME=.*/LLM_MODEL_NAME=qwen-turbo/' /home/deploy/mirofish/.env
+
+# Aplicar
+cd /home/deploy/mirofish && docker compose restart</code></pre>
+
+      <h3>Atualizar tradução / código do fork</h3>
+<pre><code>cd /home/deploy/mirofish/src
+git pull origin main
+cd /home/deploy/mirofish
+docker compose restart</code></pre>
+
+      <h3>Rebuild da imagem</h3>
+<pre><code>cd /home/deploy/mirofish/src
+git pull origin main
+docker build -t mirofish-pt:local .
+cd /home/deploy/mirofish
+docker compose up -d --force-recreate</code></pre>
+      <div class="callout warn"><strong>// ATENÇÃO</strong>O build consome ~5 GB de disco temporariamente. Verifique espaço com <code>df -h /</code> antes.</div>
+
+      <h3>Limpeza e diagnóstico</h3>
+<pre><code># Limpeza de imagens órfãs
+docker image prune -a
+
+# Diagnóstico geral
+df -h /
+free -h
+ss -tlnp
+
+# Nginx
+docker exec rastelli_nginx nginx -t
+docker exec rastelli_nginx nginx -s reload
+
+# Renovação SSL (já é automática via systemd timer)
+certbot renew --dry-run
+certbot renew</code></pre>
+    </section>
+
+    <!-- ========== SECAO 12 ========== -->
+    <section id="secao-12" class="doc-section">
+      <div class="section-head"><span class="section-num">12</span><span class="square"></span><h2>Observações Avançadas</h2></div>
+
+      <h3>Modo dev vs produção</h3>
+      <p>A imagem custom <code>mirofish-pt:local</code> roda <strong>Vite + Flask em modo dev</strong> (debug, hot reload, SSE). Para o caso atual está adequado. Para produção pesada, o ideal seria: build estático do Vue, servir os estáticos pelo Nginx, backend atrás de Gunicorn/Uvicorn com workers, <code>FLASK_DEBUG=False</code>. Exigiria customizar o <code>Dockerfile</code>.</p>
+
+      <h3>Licença AGPL-3.0</h3>
+      <p>O MiroFish é licenciado sob <strong>AGPL-3.0</strong>. Você pode usar comercialmente e modificar o código. <strong>Mas:</strong> se expor o serviço publicamente para terceiros, é tecnicamente obrigado a disponibilizar o código modificado — basta manter o link do fork público no GitHub. Como nosso fork <code>douglasemid/MiroFish</code> já está público, essa obrigação está cumprida.</p>
+
+      <h3>WebSocket / SSE</h3>
+      <p>O frontend Vue se conecta ao backend Flask via:</p>
+      <ul>
+        <li><strong>HTTP REST</strong> (axios) para criar/listar simulações, upload, comandos</li>
+        <li><strong>Server-Sent Events (SSE)</strong> para receber updates em tempo real</li>
+      </ul>
+      <p>Não há Socket.IO ou WebSocket bidirecional — só o canal SSE unidirecional servidor → cliente.</p>
+
+      <h3>Sistema de filas e tarefas assíncronas</h3>
+      <p>O backend Flask <strong>não usa Celery, RQ ou Redis Queue</strong>. Tarefas longas rodam em <strong>threads internas do Flask</strong> com <code>threaded=True</code>. O frontend faz <strong>polling</strong> em endpoints <code>/api/.../status</code>.</p>
+      <div class="callout warn"><strong>// IMPLICAÇÃO IMPORTANTE</strong>Se o container <code>mirofish</code> reiniciar no meio de uma simulação, <strong>a simulação é perdida</strong> (não há persistência da fila). Você precisa recriar.</div>
+
+      <h3>Persistência de dados</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Dado</th><th>Onde fica</th><th>Persistente?</th></tr></thead>
+        <tbody>
+          <tr><td>Uploads de PDF/MD/TXT</td><td><code>./backend/uploads/</code></td><td>✅ Sim</td></tr>
+          <tr><td>Estado de simulações em andamento</td><td>Memória do processo Python</td><td>❌ Não</td></tr>
+          <tr><td>Memória dos agentes</td><td><strong>Zep Cloud</strong> (externo)</td><td>✅ Sim</td></tr>
+          <tr><td>Logs do container</td><td><code>docker logs mirofish</code></td><td>Limitado por rotação automática</td></tr>
+          <tr><td>Relatórios gerados</td><td><code>./backend/uploads/reports/&lt;id&gt;/</code></td><td>✅ Sim</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Como o Nginx encaminha o tráfego</h3>
+<pre><code>Browser → https://miro.emidgroup.com.br
+         ↓ (TLS handshake com cert Let's Encrypt)
+Nginx (rastelli_nginx, container) — porta 443
+         ↓ (server block para miro.emidgroup.com.br)
+proxy_pass http://mirofish:3000/        ← frontend Vite
+proxy_pass http://mirofish:5001/api/    ← backend Flask
+         ↓
+Container `mirofish` na rede `app_rastelli-net`</code></pre>
+      <p>O Nginx usa <strong>resolver Docker interno</strong> (<code>127.0.0.11</code>) para resolver lazy DNS dos containers. O Host header é enviado como <code>localhost</code> para o frontend (para o Vite aceitar via <code>allowedHosts</code>), e o host real chega no backend via <code>X-Forwarded-Host</code>.</p>
+
+      <h3>Tradução incompleta — pontos não traduzidos</h3>
+      <ul>
+        <li><strong>Logs internos do backend Python</strong> (ex: <code>MiroFish Backend 启动中...</code>) ainda aparecem em chinês porque são <code>print()</code> hardcoded. Não afetam a UI.</li>
+        <li><strong>Conteúdo dos PDFs/MDs</strong> que você sobe é processado no idioma original. Se for inglês, as personas pensam em inglês mas <strong>respondem em PT-BR</strong> por causa do <code>llmInstruction</code>.</li>
+        <li><strong>Comentários de código</strong> dentro dos arquivos JS/Vue/Python permanecem em chinês/inglês — irrelevante para o usuário final.</li>
+      </ul>
+
+      <h3>Troubleshooting comum</h3>
+
+      <h4>Container não inicia / crashloop</h4>
+      <p>Causa mais comum: chave do LLM ou Zep inválida/ausente.</p>
+<pre><code>docker logs mirofish 2>&1 | head -30
+# Procure por: "LLM_API_KEY 未配置" ou "ZEP_API_KEY 未配置"</code></pre>
+
+      <h4>502 Bad Gateway no navegador</h4>
+      <p>O container <code>mirofish</code> parou. Verifique:</p>
+<pre><code>docker ps --filter name=mirofish
+docker logs mirofish 2>&1 | tail -50
+cd /home/deploy/mirofish && docker compose up -d</code></pre>
+
+      <h4>"Vite Blocked request: This host is not allowed"</h4>
+      <p>O Host header não está sendo enviado como <code>localhost</code>. Verifique no <code>nginx.conf</code> se o location <code>/</code> tem:</p>
+<pre><code>proxy_set_header Host "localhost";
+proxy_set_header X-Forwarded-Host $host;</code></pre>
+
+      <h4>Disco cheio (100%)</h4>
+<pre><code>df -h /
+docker images
+docker image prune -a</code></pre>
+
+      <h3>Roadmap sugerido</h3>
+      <div class="cards">
+        <div class="card"><h5>CURTO PRAZO</h5><div class="big" style="font-size:1.1rem">Refinos</div><div class="desc">Bind-mount do pt.json, ajustar OASIS_DEFAULT_MAX_ROUNDS, FLASK_DEBUG=False</div></div>
+        <div class="card"><h5>MÉDIO PRAZO</h5><div class="big" style="font-size:1.1rem">Multi-LLM</div><div class="desc">Conta OpenRouter com Claude, ativar acelerador qwen-turbo, backup de uploads</div></div>
+        <div class="card"><h5>LONGO PRAZO</h5><div class="big" style="font-size:1.1rem">Produção</div><div class="desc">Dockerfile produção (build + Gunicorn), filas persistentes, autenticação, painel admin</div></div>
+      </div>
+
+      <h3>Histórico de mudanças</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Data</th><th>Mudança</th></tr></thead>
+        <tbody>
+          <tr><td>2026-04-07</td><td>Setup inicial: pasta isolada, docker-compose, SSL, vhost Nginx, primeiro deploy</td></tr>
+          <tr><td>2026-04-07</td><td>Tradução completa para PT-BR: 646 strings, default locale, instruction LLM, CSS</td></tr>
+          <tr><td>2026-04-07</td><td>Build de imagem custom <code>mirofish-pt:local</code> (após detectar imagem oficial desatualizada)</td></tr>
+          <tr><td>2026-04-07</td><td>Criação desta documentação consolidada</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="brand"><span class="square"></span>MIRO.EMIDGROUP</div>
+      <p>Documentação técnica do motor de simulação de inteligência coletiva instalado na infraestrutura EMIDGROUP. Construído sobre MiroFish (CAMEL-AI/OASIS) com tradução completa para Português Brasileiro e adaptação para a stack EMIDGROUP.</p>
+      <p style="margin-top:8px;font-size:.7rem;color:#666">Documentação gerada com Claude (Anthropic) em colaboração com Douglas EMID — Abril/2026</p>
+    </div>
+    <div class="links">
+      <a href="https://miro.emidgroup.com.br" target="_blank">→ App em produção</a>
+      <a href="https://github.com/douglasemid/MiroFish" target="_blank">→ Fork no GitHub</a>
+      <a href="https://github.com/666ghj/MiroFish" target="_blank">→ Upstream</a>
+      <a href="https://github.com/camel-ai/oasis" target="_blank">→ OASIS (CAMEL-AI)</a>
+      <a href="https://www.getzep.com" target="_blank">→ Zep Cloud</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ============ FLOW DIAGRAM (canvas) ============ */
+(function () {
+  const canvas = document.getElementById('flowCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  function drawBox(x, y, w, h, label, sub) {
+    ctx.strokeStyle = '#000'; ctx.lineWidth = 1.5;
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(x, y, w, h);
+    ctx.strokeRect(x, y, w, h);
+    // orange square
+    ctx.fillStyle = '#FF4500';
+    ctx.fillRect(x, y, 10, 10);
+    // label
+    ctx.fillStyle = '#000';
+    ctx.font = '600 13px "JetBrains Mono", monospace';
+    ctx.fillText(label, x + 14, y + 22);
+    if (sub) {
+      ctx.font = '11px "Inter", sans-serif';
+      ctx.fillStyle = '#666';
+      const words = sub.split(' ');
+      let line = '', ly = y + 42;
+      words.forEach(word => {
+        if ((line + word).length > 28) {
+          ctx.fillText(line.trim(), x + 8, ly); ly += 14; line = word + ' ';
+        } else line += word + ' ';
+      });
+      if (line) ctx.fillText(line.trim(), x + 8, ly);
+    }
+  }
+
+  function drawArrow(x1, y1, x2, y2) {
+    ctx.strokeStyle = '#FF4500'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    // arrowhead
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - 8 * Math.cos(angle - Math.PI / 7), y2 - 8 * Math.sin(angle - Math.PI / 7));
+    ctx.lineTo(x2 - 8 * Math.cos(angle + Math.PI / 7), y2 - 8 * Math.sin(angle + Math.PI / 7));
+    ctx.closePath();
+    ctx.fillStyle = '#FF4500'; ctx.fill();
+  }
+
+  // Background grid
+  ctx.fillStyle = '#F5F5F5'; ctx.fillRect(0, 0, W, H);
+
+  // Top row — 3 boxes
+  drawBox(40,  60, 200, 70, 'STEP 01 / GRAFO',  'Upload PDF + Prompt → Ontologia → GraphRAG');
+  drawBox(350, 60, 200, 70, 'STEP 02 / SETUP',  'Personas geradas + Config de mundo');
+  drawBox(660, 60, 200, 70, 'STEP 03 / SIMULAR', 'M rodadas × N agentes × LLM call');
+
+  // Bottom row — 2 boxes
+  drawBox(195, 200, 200, 70, 'STEP 04 / REPORT',     'Report Agent via ReACT + tools');
+  drawBox(505, 200, 200, 70, 'STEP 05 / INTERAÇÃO',  'Chat com agentes / Surveys / Drill');
+
+  // Arrows
+  drawArrow(240, 95, 350, 95);
+  drawArrow(550, 95, 660, 95);
+  drawArrow(760, 130, 605, 200);
+  drawArrow(395, 235, 505, 235);
+})();
+
+/* ============ COST BAR CHART (canvas) ============ */
+(function () {
+  const canvas = document.getElementById('costChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  const data = [
+    { name: 'qwen-turbo',         cost: 0.20 },
+    { name: 'deepseek-chat',      cost: 0.30 },
+    { name: 'qwen-plus',          cost: 0.80 },
+    { name: 'gpt-4o-mini',        cost: 1.00 },
+    { name: 'claude-haiku-4-5',   cost: 1.50 },
+    { name: 'claude-sonnet-4-6',  cost: 5.00 },
+    { name: 'claude-opus-4-6',    cost: 25.00 },
+  ];
+
+  ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
+
+  const padL = 160, padR = 60, padT = 20, padB = 30;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+  const maxCost = 25;
+
+  // grid lines (vertical)
+  ctx.strokeStyle = '#EEE'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 5; i++) {
+    const x = padL + (chartW / 5) * i;
+    ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, H - padB); ctx.stroke();
+    // axis label
+    ctx.fillStyle = '#999'; ctx.font = '10px "JetBrains Mono", monospace';
+    ctx.fillText('$' + ((maxCost / 5) * i).toFixed(0), x - 6, H - padB + 16);
+  }
+
+  const barH = (chartH - 10) / data.length - 6;
+  data.forEach((d, i) => {
+    const y = padT + i * (barH + 6);
+    const w = (d.cost / maxCost) * chartW;
+    // label
+    ctx.fillStyle = '#000'; ctx.font = '11px "JetBrains Mono", monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(d.name, padL - 10, y + barH / 2 + 4);
+    // bar
+    ctx.fillStyle = '#000';
+    ctx.fillRect(padL, y, w, barH);
+    // orange tip
+    ctx.fillStyle = '#FF4500';
+    ctx.fillRect(padL + w - 4, y, 4, barH);
+    // value
+    ctx.fillStyle = '#444'; ctx.font = '10px "JetBrains Mono", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('US$ ' + d.cost.toFixed(2), padL + w + 8, y + barH / 2 + 4);
+  });
+
+  ctx.textAlign = 'left';
+})();
+</script>
+
+</body>
+</html>
